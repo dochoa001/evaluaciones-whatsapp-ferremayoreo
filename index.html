@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluaciones WhatsApp · Ferremayoreo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#FE8301; --yellow:#FFED02; --pink:#ED8BFA; --black:#000;
+    --gray:#EBEAE8; --soft-orange:#FFD9BA; --soft-yellow:#FFF3B8; --soft-pink:#F4CDF8;
+    --muted:#575555; --bg:#FAF9F7; --card:#FFFFFF;
+    --ok:#1E7A45; --ok-bg:#E4F4EA; --bad:#B42318; --bad-bg:#FDE8E6;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--black);font:16px/1.55 Inter,Arial,system-ui,sans-serif}
+  .brandbar{height:6px;background:linear-gradient(90deg,var(--yellow),var(--orange),var(--pink))}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 16px 64px}
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.2px;font-size:14px}
+  .logo i{width:14px;height:14px;border-radius:50%;background:var(--orange);display:inline-block}
+  .client{font-size:13px;color:var(--muted)}
+  .tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--orange)}
+  .tag::before{content:"";width:18px;height:2px;background:var(--orange)}
+  h1,h2{font-family:Fraunces,Georgia,serif;font-weight:700;line-height:1.15;margin:.3em 0 .4em}
+  h1{font-size:clamp(28px,6vw,40px)}
+  h2{font-size:22px}
+  .lead{color:var(--muted);margin:0 0 24px}
+  a{color:inherit}
+  .card{background:var(--card);border:1px solid var(--black);border-radius:var(--radius);padding:20px}
+  .grid{display:grid;gap:14px}
+  .sess{display:flex;gap:16px;align-items:center;text-decoration:none;transition:transform .12s ease, box-shadow .12s ease}
+  .sess:hover,.sess:focus-visible{transform:translateY(-2px);box-shadow:4px 4px 0 var(--orange);outline:none}
+  .num{flex:0 0 auto;width:52px;height:52px;border-radius:12px;background:var(--soft-orange);display:grid;place-items:center;font-family:Fraunces,Georgia,serif;font-weight:700;font-size:20px}
+  .sess h3{margin:0 0 2px;font-size:17px}
+  .sess p{margin:0;color:var(--muted);font-size:14px}
+  .sess .go{margin-left:auto;font-weight:600;white-space:nowrap;font-size:14px}
+  .meta{font-size:13px;color:var(--muted);margin-top:4px}
+  .back{display:inline-block;font-size:14px;color:var(--muted);text-decoration:none;margin-bottom:12px}
+  .back:hover{color:var(--black)}
+  label.field{display:block;font-weight:600;margin-bottom:6px}
+  input[type=text]{width:100%;font:inherit;padding:12px 14px;border:1px solid var(--black);border-radius:10px;background:#fff}
+  input[type=text]:focus{outline:3px solid var(--soft-orange);outline-offset:1px}
+  ol.qs{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:14px;counter-reset:q}
+  .q{counter-increment:q}
+  .q-text{font-weight:600;margin:0 0 12px}
+  .q-text::before{content:counter(q) ". ";color:var(--orange);font-weight:700}
+  .opts{display:grid;gap:8px}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border:1px solid #CFCDCA;border-radius:10px;cursor:pointer;background:#fff}
+  .opt:hover{border-color:var(--black)}
+  .opt input{margin:3px 0 0;accent-color:var(--orange);flex:0 0 auto;width:18px;height:18px}
+  .opt:has(input:checked){border-color:var(--black);background:var(--soft-yellow)}
+  .q.missing{border-color:var(--orange);box-shadow:0 0 0 3px var(--soft-orange)}
+  .graded .opt{cursor:default}
+  .graded .opt.is-correct{border-color:var(--ok);background:var(--ok-bg);border-width:2px}
+  .graded .opt.is-wrong{border-color:var(--bad);background:var(--bad-bg);border-width:2px}
+  .fb{margin-top:12px;padding:10px 12px;border-radius:10px;font-size:14px}
+  .fb.ok{background:var(--ok-bg)}
+  .fb.bad{background:var(--bad-bg)}
+  .fb b{display:block;margin-bottom:2px}
+  .actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px}
+  .btn{font:inherit;font-weight:600;border:1px solid var(--black);background:var(--black);color:#fff;padding:12px 20px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn:hover{background:var(--orange);border-color:var(--orange);color:#000}
+  .btn.ghost{background:#fff;color:#000}
+  .btn.ghost:hover{background:var(--soft-orange)}
+  .progress{font-size:14px;color:var(--muted)}
+  .msg{color:var(--bad);font-size:14px;font-weight:600}
+  .score{margin-top:18px;text-align:center;background:linear-gradient(135deg,var(--soft-yellow),var(--soft-orange) 55%,var(--soft-pink))}
+  .score .big{font-family:Fraunces,Georgia,serif;font-size:56px;font-weight:700;line-height:1}
+  .score .big small{font-size:24px;color:var(--muted)}
+  .score p{margin:8px 0 0}
+  .score .who{font-size:14px;color:var(--muted)}
+  .saved{font-size:13px;color:var(--muted);margin-top:6px}
+  footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center}
+  @media (max-width:520px){
+    .sess{flex-wrap:wrap}
+    .sess .go{margin-left:68px}
+    .card{padding:16px}
+  }
+</style>
+</head>
+<body>
+<div class="brandbar"></div>
+<main class="wrap" id="app"></main>
+
+<script>
+/* =====================================================================
+   CONFIGURACIÓN
+   SHEET_URL: pega aquí la URL de la aplicación web de Google Apps Script
+   (termina en /exec) para guardar los resultados en Google Sheets.
+   Si la dejas vacía, la página solo muestra la calificación y no guarda nada.
+   ===================================================================== */
+const SHEET_URL = "";
+
+/* En cada pregunta, la PRIMERA opción es la correcta.
+   Las opciones se revuelven al mostrarse, así cada persona las ve en otro orden. */
+const SESIONES = [
+{
+  titulo: "La bandeja de WhatsApp",
+  resumen: "Conexión, vistas y filtros, asignación, notas internas y la regla de 24 horas.",
+  preguntas: [
+    { q: "Una vez conectado el número, ¿a dónde llegan los mensajes de WhatsApp?",
+      o: ["A la bandeja de conversaciones de HubSpot", "Al correo de cada vendedor", "Solo al teléfono donde está instalado WhatsApp", "A un reporte que se actualiza cada semana"],
+      e: "Cada mensaje entra como una conversación en la bandeja de HubSpot, donde el equipo puede verlo y atenderlo." },
+    { q: "¿Qué permite la conexión por coexistencia?",
+      o: ["Usar el mismo número en la app de WhatsApp Business del teléfono y en HubSpot al mismo tiempo", "Juntar varios números distintos en una sola conversación", "Enviar mensajes sin conexión a internet", "Que el cliente vea las notas internas del equipo"],
+      e: "Con la coexistencia, el número sigue funcionando en el teléfono y, a la vez, las conversaciones se atienden desde HubSpot." },
+    { q: "¿Quién puede conectar un número de WhatsApp Business al portal de HubSpot?",
+      o: ["Un usuario con permisos de súper administrador", "Cualquier usuario que tenga acceso a la bandeja", "El cliente, desde su propio teléfono", "Solo el equipo de soporte de Meta"],
+      e: "Conectar un canal es un ajuste de la cuenta, por eso lo hace un súper administrador del portal." },
+    { q: "¿Para qué sirve la vista «Asignadas a mí» en la bandeja?",
+      o: ["Para ver solo las conversaciones que cada quien tiene a su cargo", "Para ver las conversaciones cerradas del mes pasado", "Para ver los mensajes que llegaron por correo", "Para ver las plantillas aprobadas por Meta"],
+      e: "Las vistas y filtros ayudan a encontrar rápido lo que a cada persona le toca atender." },
+    { q: "¿Por qué conviene asignar cada conversación a una persona?",
+      o: ["Para que quede claro quién la atiende y no haya respuestas dobles", "Para que el cliente reciba respuestas de varios vendedores", "Porque si no se asigna, el mensaje se borra", "Porque Meta lo pide para aprobar el número"],
+      e: "Asignar deja un solo responsable por conversación; así el cliente recibe una respuesta clara y a tiempo." },
+    { q: "Quieres pedirle ayuda a un compañero dentro de una conversación, sin que el cliente lo vea. ¿Qué usas?",
+      o: ["Un comentario interno, mencionando al compañero con @", "Un mensaje de WhatsApp al cliente con copia al compañero", "Una plantilla de Meta", "Un correo al cliente"],
+      e: "Los comentarios internos solo los ve el equipo en HubSpot, y al mencionar con @ el compañero recibe un aviso." },
+    { q: "¿Cuánto dura la ventana de atención de WhatsApp?",
+      o: ["24 horas desde el último mensaje del cliente", "24 horas desde el último mensaje del vendedor", "Una semana desde que se creó el contacto", "No tiene límite"],
+      e: "Cada vez que el cliente escribe, la ventana se abre (o se renueva) por 24 horas." },
+    { q: "Pasaron más de 24 horas desde el último mensaje del cliente. ¿Cómo se le puede escribir?",
+      o: ["Con una plantilla aprobada por Meta", "Con un mensaje libre, como siempre", "Ya no se le puede escribir por WhatsApp", "Solo con una nota de voz"],
+      e: "Fuera de la ventana solo se envían plantillas aprobadas. Cuando el cliente responde, se vuelve a abrir la ventana y se puede conversar libremente." },
+    { q: "Además de la bandeja, ¿dónde queda registrada la conversación de WhatsApp con un cliente?",
+      o: ["En la ficha del contacto, en su actividad", "En ningún lado, solo en el teléfono", "En el panel de reportes, como archivo adjunto", "En la configuración de la cuenta"],
+      e: "La conversación queda asociada al contacto, así cualquier persona del equipo puede ver su historial completo." },
+    { q: "Una conversación ya quedó atendida. ¿Qué conviene hacer?",
+      o: ["Cerrarla, para que la bandeja muestre solo lo pendiente", "Dejarla abierta por si acaso", "Borrarla", "Reasignarla a otro vendedor"],
+      e: "Al cerrar lo atendido, la bandeja funciona como lista de pendientes. Si el cliente vuelve a escribir, la conversación se abre de nuevo." }
+  ]
+},
+{
+  titulo: "Plantillas de Meta",
+  resumen: "Qué es una plantilla, categorías, partes, aprobación y envío.",
+  preguntas: [
+    { q: "¿Qué es una plantilla de WhatsApp?",
+      o: ["Un mensaje con formato que Meta revisó y aprobó antes de usarse", "Una respuesta que escribe la inteligencia artificial", "Un diseño de correo electrónico", "Un PDF que se adjunta a la conversación"],
+      e: "Las plantillas son mensajes preaprobados por Meta que permiten iniciar o retomar una conversación." },
+    { q: "¿En qué situación se necesita una plantilla?",
+      o: ["Para escribirle primero a un cliente o cuando ya pasaron más de 24 horas desde su último mensaje", "Cuando el cliente escribió hace 10 minutos", "Para dejar un comentario interno", "Para asignar una conversación"],
+      e: "Dentro de la ventana de 24 horas se conversa libremente; fuera de ella, o para escribir primero, se usa una plantilla." },
+    { q: "Un mensaje que le avisa al cliente que su cotización ya está lista pertenece a la categoría…",
+      o: ["Utilidad", "Marketing", "Autenticación", "Promoción"],
+      e: "Utilidad agrupa avisos sobre algo que el cliente ya pidió o está en proceso: cotizaciones, pedidos, recordatorios." },
+    { q: "Un mensaje con la promoción del mes en herramientas pertenece a la categoría…",
+      o: ["Marketing", "Utilidad", "Autenticación", "Soporte"],
+      e: "Las ofertas, promociones e invitaciones van en Marketing." },
+    { q: "¿Cuál es la única parte obligatoria de una plantilla?",
+      o: ["El cuerpo del mensaje", "El encabezado", "El pie de página", "Los botones"],
+      e: "El encabezado, el pie de página y los botones son opcionales; el cuerpo siempre va." },
+    { q: "¿Para qué sirven las variables, como {{1}}, dentro de una plantilla?",
+      o: ["Para personalizar datos en cada envío, como el nombre del cliente", "Para ocultar parte del mensaje", "Para que Meta la apruebe más rápido", "Para enviar el mensaje en otro idioma"],
+      e: "Una variable se llena con el dato de cada contacto al momento de enviar, así el mensaje se siente personal." },
+    { q: "Al mandar una plantilla a revisión, ¿qué conviene incluir para cada variable?",
+      o: ["Un ejemplo del valor que tendrá, como «Juan»", "Nada, Meta lo deduce", "El teléfono del cliente", "Una imagen"],
+      e: "Meta pide un ejemplo de cada variable para entender cómo se verá el mensaje real." },
+    { q: "¿Quién aprueba o rechaza las plantillas?",
+      o: ["Meta", "El súper administrador de HubSpot", "El cliente que la recibe", "Nadie, se aprueban solas al guardarlas"],
+      e: "Toda plantilla pasa por la revisión de Meta antes de poder enviarse." },
+    { q: "Si Meta rechaza una plantilla, ¿qué conviene hacer?",
+      o: ["Revisar el motivo, ajustar el texto y mandarla de nuevo a revisión", "Enviarla igual desde el teléfono", "Esperar un mes para volver a intentarlo", "Cambiar de número de WhatsApp"],
+      e: "El motivo del rechazo indica qué corregir; con el ajuste, la plantilla se puede enviar otra vez a revisión." },
+    { q: "En HubSpot, ¿desde dónde se puede enviar una plantilla aprobada?",
+      o: ["Desde la bandeja de conversaciones o desde la ficha del contacto", "Solo desde el teléfono", "Solo desde un reporte", "Desde la configuración de la cuenta"],
+      e: "La plantilla se elige al escribir en la conversación o desde el registro del contacto." }
+  ]
+},
+{
+  titulo: "Workflows con WhatsApp",
+  resumen: "Disparadores, acciones, requisitos del contacto y cómo apoyarse en Breeze.",
+  preguntas: [
+    { q: "¿Qué es un workflow en HubSpot?",
+      o: ["Una automatización que realiza acciones por sí sola cuando se cumplen ciertas condiciones", "Un reporte de ventas", "Una lista de contactos que se actualiza a mano", "Una plantilla de correo"],
+      e: "Un workflow ejecuta pasos automáticos (enviar, esperar, actualizar) sin que alguien tenga que hacerlos a mano." },
+    { q: "¿Qué define qué contactos entran a un workflow?",
+      o: ["Los criterios de inscripción (el disparador)", "El orden alfabético de los contactos", "El vendedor con más conversaciones", "El color de la etiqueta del contacto"],
+      e: "El disparador es la condición que, al cumplirse, hace que un contacto entre al workflow." },
+    { q: "En un workflow, ¿qué tipo de mensaje de WhatsApp se envía?",
+      o: ["Una plantilla aprobada por Meta", "Cualquier mensaje libre", "Una nota de voz", "Un comentario interno"],
+      e: "La acción de WhatsApp en un workflow envía plantillas aprobadas; los mensajes libres se escriben desde la bandeja." },
+    { q: "¿Qué necesita un contacto para recibir un WhatsApp desde un workflow?",
+      o: ["Tener número de teléfono y haber aceptado recibir mensajes de WhatsApp", "Solo tener correo electrónico", "Haber comprado antes", "Estar asignado a un vendedor"],
+      e: "Sin número o sin aceptación, el mensaje no se envía. Así se cuida al cliente y la reputación del número ante Meta." },
+    { q: "¿Para qué sirve la acción «Retraso» en un workflow?",
+      o: ["Para esperar un tiempo antes de la siguiente acción, por ejemplo 2 días", "Para cancelar el workflow", "Para eliminar al contacto", "Para que el mensaje llegue más rápido"],
+      e: "Los retrasos permiten dar seguimiento en el momento adecuado, no todo de golpe." },
+    { q: "En el ejemplo de seguimiento de cotización, ¿qué hace que el contacto entre al workflow?",
+      o: ["Que se le envió una cotización", "Que es su cumpleaños", "Que el vendedor cerró sesión", "Que pasó un mes sin cambios en el portal"],
+      e: "El envío de la cotización es el disparador; a partir de ahí, el workflow da el seguimiento por WhatsApp." },
+    { q: "¿Para qué sirve una rama «si/entonces» en un workflow?",
+      o: ["Para tomar caminos distintos según una condición, por ejemplo si el cliente ya respondió o no", "Para duplicar el workflow", "Para cambiar el idioma del mensaje", "Para enviar el mismo mensaje dos veces"],
+      e: "Con una rama, el workflow decide qué hacer según lo que pasó con cada contacto." },
+    { q: "¿Cómo se le pide a Breeze que arme un workflow?",
+      o: ["Describiendo en palabras lo que se necesita que pase", "Escribiendo código", "Llamando a soporte de HubSpot", "Subiendo una foto del proceso"],
+      e: "Basta con explicar el objetivo con tus palabras; Breeze propone el workflow a partir de esa descripción." },
+    { q: "Breeze ya propuso un workflow. ¿Qué sigue?",
+      o: ["Revisar el disparador, las acciones y los mensajes, y activarlo cuando todo esté correcto", "Activarlo de inmediato sin revisarlo", "Borrarlo y hacerlo a mano", "Enviarlo a Meta para su aprobación"],
+      e: "Breeze ayuda a armarlo, pero la revisión final es del equipo antes de activarlo." },
+    { q: "¿Cómo conviene probar un workflow antes de usarlo con clientes reales?",
+      o: ["Con un contacto de prueba", "Con toda la base de contactos", "No hace falta probarlo", "Con el contacto del director"],
+      e: "Un contacto de prueba permite ver el resultado real sin molestar a ningún cliente." }
+  ]
+},
+{
+  titulo: "Agente de clientes",
+  resumen: "Directrices, contenido, transferencia a un asesor, probador, créditos e informe.",
+  preguntas: [
+    { q: "¿Qué hace el agente de clientes?",
+      o: ["Responde automáticamente las preguntas de los clientes con la información que se le da", "Crea las campañas de Facebook", "Cobra las facturas pendientes", "Reemplaza a todo el equipo de ventas"],
+      e: "El agente atiende preguntas con base en su contenido y directrices, y pasa al equipo lo que necesita a una persona." },
+    { q: "¿Qué se gana cuando el agente atiende primero a los prospectos que llegan de las campañas de Facebook?",
+      o: ["Respuesta inmediata a cualquier hora, y a los vendedores les llegan las conversaciones que necesitan a una persona", "Ya no hace falta dar seguimiento", "Las campañas cuestan menos", "El cliente ya no puede hablar con una persona"],
+      e: "El agente cubre la primera respuesta; el equipo se enfoca en las conversaciones con más potencial." },
+    { q: "¿Para qué sirven las directrices del agente?",
+      o: ["Para definir su tono y qué puede y qué no puede responder", "Para elegir los colores del chat", "Para conectar el número de WhatsApp", "Para crear reportes"],
+      e: "Las directrices son las instrucciones de comportamiento: cómo habla y cuáles son sus límites." },
+    { q: "¿De dónde toma el agente la información para responder?",
+      o: ["Del contenido que se le carga: preguntas frecuentes, páginas y documentos", "De las conversaciones privadas de los vendedores", "De cualquier página de internet", "Se la inventa"],
+      e: "El agente responde con las fuentes que se le dan; por eso es clave mantener ese contenido al día." },
+    { q: "¿Qué tipo de información NO debe compartir el agente?",
+      o: ["Información interna, como costos o márgenes", "Horarios de las sucursales", "Formas de pago", "Respuestas a preguntas frecuentes"],
+      e: "El agente resuelve preguntas frecuentes; la información interna de la empresa queda fuera." },
+    { q: "¿Cuándo pasa el agente una conversación a un asesor?",
+      o: ["Cuando el cliente pide hablar con una persona o el tema necesita a alguien del equipo", "Nunca", "Solo los fines de semana", "En cuanto el cliente saluda"],
+      e: "La transferencia asegura que el cliente llegue con un asesor cuando el agente ya no es la mejor opción." },
+    { q: "¿Para qué sirve el probador del agente?",
+      o: ["Para hacerle preguntas de prueba y revisar cómo responde antes de dejar activo un cambio", "Para medir la velocidad de internet", "Para enviar plantillas", "Para evaluar a los vendedores"],
+      e: "En el probador se ve la respuesta que daría el agente, sin que la reciba ningún cliente." },
+    { q: "¿Qué son los créditos de HubSpot en relación con el agente?",
+      o: ["Lo que el agente consume al atender conversaciones; el portal tiene una cantidad disponible cada mes", "Puntos que gana el cliente al comprar", "Un descuento en la licencia", "Un reporte de ventas"],
+      e: "Conviene revisar el consumo de créditos para que el agente no se quede sin capacidad a mitad de mes." },
+    { q: "¿Qué conviene revisar cada semana en el informe del agente?",
+      o: ["Qué preguntaron los clientes, qué resolvió el agente y qué pasó a un asesor", "El historial de contraseñas", "La lista de plantillas rechazadas", "Los colores del panel"],
+      e: "El informe muestra cómo está trabajando el agente y dónde conviene ajustarlo." },
+    { q: "El informe muestra una pregunta frecuente que el agente no supo responder. ¿Qué conviene hacer?",
+      o: ["Agregar esa información a su contenido o ajustar sus directrices", "Nada, es normal", "Apagar el agente", "Pedirle al cliente que no pregunte eso"],
+      e: "Cada pregunta sin respuesta es una oportunidad para completar el contenido del agente." }
+  ]
+},
+{
+  titulo: "Reportes de WhatsApp",
+  resumen: "Qué medir, la fórmula de un reporte, los tres reportes clave y el panel.",
+  preguntas: [
+    { q: "¿Cuál es la idea de revisar los reportes de WhatsApp cada lunes?",
+      o: ["Saber en pocos minutos cómo va WhatsApp y qué conviene atender", "Revisar la ortografía de los mensajes", "Aprobar plantillas", "Conectar el número"],
+      e: "Una revisión corta y constante permite detectar a tiempo lo que necesita atención." },
+    { q: "¿Cuáles son las partes de la «fórmula» de un reporte?",
+      o: ["Fuente de datos, métrica, agrupación y filtros", "Color, tamaño, tipo de letra y logo", "Nombre, correo, teléfono y empresa", "Plantilla, variable, botón y pie"],
+      e: "Qué datos, qué se cuenta o promedia, cómo se divide y qué se incluye: con eso se arma cualquier reporte." },
+    { q: "En el reporte «Conversaciones por vendedor», ¿qué papel tiene el vendedor?",
+      o: ["Es la agrupación: el total se divide por cada vendedor", "Es la fuente de datos", "Es el filtro de fechas", "Es la métrica"],
+      e: "La métrica es el número de conversaciones y el vendedor es la forma de dividirlo." },
+    { q: "¿Qué muestra el reporte «Conversaciones abiertas por bandeja»?",
+      o: ["Cuántas conversaciones siguen pendientes de atender o cerrar en cada bandeja", "Cuántas plantillas aprobó Meta", "Cuántos contactos nuevos hubo", "Las ventas del mes"],
+      e: "Sirve para ver el pendiente real del equipo en cada bandeja." },
+    { q: "¿Qué mide el «Tiempo de primera respuesta»?",
+      o: ["Cuánto tarda el equipo en responder por primera vez desde que el cliente escribe", "Cuánto dura una conversación completa", "Cuánto tarda el cliente en contestar", "Cuánto tarda Meta en aprobar una plantilla"],
+      e: "Es uno de los indicadores que más influyen en la experiencia del cliente." },
+    { q: "El tiempo de primera respuesta subió mucho esta semana. ¿Qué conviene revisar?",
+      o: ["Cómo se están asignando las conversaciones y la carga de cada persona", "Los colores del panel", "Las plantillas rechazadas", "Nada, no es importante"],
+      e: "Un aumento suele indicar conversaciones sin asignar o personas con demasiada carga." },
+    { q: "Un vendedor tiene muchas conversaciones abiertas. ¿Qué puede significar?",
+      o: ["Que tiene pendientes por atender o no está cerrando las que ya resolvió", "Que vendió más que nadie", "Que su número está desconectado", "Que Meta lo bloqueó"],
+      e: "Vale la pena revisar con esa persona si son pendientes reales o conversaciones que solo falta cerrar." },
+    { q: "¿Dónde se encuentra el panel «WhatsApp Ferremayoreo»?",
+      o: ["En Informes > Paneles", "En la configuración de WhatsApp", "En la ficha de cada contacto", "En el teléfono"],
+      e: "Los paneles reúnen varios reportes en una sola vista, dentro de la sección de Informes." },
+    { q: "¿Cómo ves en el panel solo lo que pasó la semana pasada?",
+      o: ["Con el filtro de fechas del panel", "Borrando las conversaciones anteriores", "Creando un panel nuevo cada semana", "No se puede"],
+      e: "El filtro de fechas cambia el periodo de todos los reportes del panel a la vez." },
+    { q: "¿Cómo puede recibir el equipo el panel sin tener que entrar a buscarlo?",
+      o: ["Programando el envío del panel por correo", "Imprimiéndolo cada lunes", "Pidiéndoselo por WhatsApp a un cliente", "No se puede compartir"],
+      e: "Al programar el envío, el panel llega por correo con la frecuencia que se elija." }
+  ]
+}
+];
+
+/* ============================ Lógica ============================ */
+const app = document.getElementById("app");
+const pad = n => String(n).padStart(2, "0");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+function shuffle(arr){ const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+const header = `
+  <header class="top">
+    <div class="logo"><i></i>Black &amp; Orange</div>
+    <div class="client">Ferremayoreo Elizondo · WhatsApp en HubSpot</div>
+  </header>`;
+const footer = `<footer>Capacitaciones WhatsApp en HubSpot · Black &amp; Orange</footer>`;
+
+function renderHome(){
+  document.title = "Evaluaciones WhatsApp · Ferremayoreo";
+  app.innerHTML = header + `
+    <span class="tag">Evaluaciones</span>
+    <h1>¿Qué tanto aprendimos?</h1>
+    <p class="lead">Al terminar cada sesión, eliges la evaluación que corresponde, respondes 10 preguntas y al final ves tu calificación con las respuestas explicadas.</p>
+    <div class="grid">
+      ${SESIONES.map((s, i) => `
+        <a class="card sess" href="?sesion=${i + 1}">
+          <span class="num">${pad(i + 1)}</span>
+          <div>
+            <h3>${esc(s.titulo)}</h3>
+            <p>${esc(s.resumen)}</p>
+            <div class="meta">${s.preguntas.length} preguntas · 5 min aprox.</div>
+          </div>
+          <span class="go">Empezar →</span>
+        </a>`).join("")}
+    </div>` + footer;
+}
+
+function renderQuiz(idx){
+  const s = SESIONES[idx];
+  document.title = `Sesión ${pad(idx + 1)} · ${s.titulo} · Evaluación`;
+  // Cada pregunta guarda sus opciones revueltas y cuál es la correcta.
+  const qs = s.preguntas.map(p => ({ ...p, opts: shuffle(p.o.map((t, k) => ({ t, ok: k === 0 }))) }));
+
+  app.innerHTML = header + `
+    <a class="back" href="./">← Todas las sesiones</a><br>
+    <span class="tag">Sesión ${pad(idx + 1)}</span>
+    <h1>${esc(s.titulo)}</h1>
+    <p class="lead">Para cada pregunta, eliges la opción que consideres correcta. Al final ves tu calificación y la explicación de cada respuesta.</p>
+    <form id="quiz" novalidate>
+      <div class="card">
+        <label class="field" for="nombre">Tu nombre</label>
+        <input type="text" id="nombre" autocomplete="name" placeholder="Nombre y apellido">
+      </div>
+      <div id="result"></div>
+      <ol class="qs">
+        ${qs.map((p, i) => `
+          <li class="card q" id="q${i}">
+            <p class="q-text">${esc(p.q)}</p>
+            <div class="opts">
+              ${p.opts.map((o, k) => `
+                <label class="opt"><input type="radio" name="q${i}" value="${k}"><span>${esc(o.t)}</span></label>`).join("")}
+            </div>
+            <div class="fb" hidden></div>
+          </li>`).join("")}
+      </ol>
+      <div class="actions" id="actions">
+        <button class="btn" type="submit">Ver mi calificación</button>
+        <span class="progress" id="progress">0 de ${qs.length} respondidas</span>
+        <span class="msg" id="msg" role="alert"></span>
+      </div>
+    </form>` + footer;
+
+  const form = document.getElementById("quiz");
+  const progress = document.getElementById("progress");
+  const msg = document.getElementById("msg");
+  const answered = () => qs.filter((_, i) => form.querySelector(`input[name=q${i}]:checked`)).length;
+
+  form.addEventListener("change", e => {
+    progress.textContent = `${answered()} de ${qs.length} respondidas`;
+    const li = e.target.closest(".q"); if (li) li.classList.remove("missing");
+  });
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const nombre = document.getElementById("nombre").value.trim();
+    form.querySelectorAll(".q").forEach(li => li.classList.remove("missing"));
+    if (!nombre) { msg.textContent = "Para ver tu calificación, primero escribes tu nombre."; document.getElementById("nombre").focus(); return; }
+    const faltan = qs.map((_, i) => i).filter(i => !form.querySelector(`input[name=q${i}]:checked`));
+    if (faltan.length) {
+      faltan.forEach(i => document.getElementById("q" + i).classList.add("missing"));
+      msg.textContent = faltan.length === 1 ? "Falta 1 pregunta por responder." : `Faltan ${faltan.length} preguntas por responder.`;
+      document.getElementById("q" + faltan[0]).scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    msg.textContent = "";
+
+    let aciertos = 0; const detalle = [];
+    qs.forEach((p, i) => {
+      const li = document.getElementById("q" + i);
+      const elegida = +form.querySelector(`input[name=q${i}]:checked`).value;
+      const ok = p.opts[elegida].ok;
+      if (ok) aciertos++;
+      detalle.push(ok ? "✔" : "✘");
+      li.querySelectorAll(".opt").forEach((lab, k) => {
+        if (p.opts[k].ok) lab.classList.add("is-correct");
+        else if (k === elegida) lab.classList.add("is-wrong");
+      });
+      const fb = li.querySelector(".fb");
+      const correcta = p.opts.find(o => o.ok).t;
+      fb.className = "fb " + (ok ? "ok" : "bad");
+      fb.innerHTML = ok ? `<b>✓ Correcto</b>${esc(p.e)}` : `<b>✗ La respuesta correcta es: ${esc(correcta)}</b>${esc(p.e)}`;
+      fb.hidden = false;
+    });
+    form.classList.add("graded");
+    form.querySelectorAll("input").forEach(inp => inp.disabled = true);
+
+    const total = qs.length;
+    const frase = aciertos === total ? "¡Excelente! Dominas los temas de esta sesión."
+      : aciertos >= 8 ? "¡Muy bien! Abajo puedes repasar las que se escaparon."
+      : aciertos >= 6 ? "Vas bien. Te sugerimos repasar las explicaciones de abajo."
+      : "Buen primer intento. Con la presentación a la mano puedes repasar y volver a intentarlo cuando gustes.";
+    const fecha = new Date().toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" });
+
+    document.getElementById("result").innerHTML = `
+      <div class="card score" id="score">
+        <span class="tag">Tu calificación</span>
+        <div class="big">${aciertos}<small> / ${total}</small></div>
+        <p>${frase}</p>
+        <p class="who">${esc(nombre)} · Sesión ${pad(idx + 1)} · ${fecha}</p>
+        <p class="saved" id="saved"></p>
+      </div>`;
+    document.getElementById("actions").innerHTML = `
+      <a class="btn" href="?sesion=${idx + 1}">Intentar de nuevo</a>
+      <a class="btn ghost" href="./">Ver otras sesiones</a>`;
+    document.getElementById("score").scrollIntoView({ behavior: "smooth", block: "start" });
+
+    if (SHEET_URL) {
+      const saved = document.getElementById("saved");
+      saved.textContent = "Guardando tu resultado…";
+      fetch(SHEET_URL, {
+        method: "POST", mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ sesion: `${pad(idx + 1)} · ${s.titulo}`, nombre, aciertos, total, detalle })
+      }).then(() => { saved.textContent = "Tu resultado quedó registrado."; })
+        .catch(() => { saved.textContent = "No se pudo registrar el resultado. Para tenerlo a la mano, puedes tomar una captura de esta pantalla."; });
+    }
+  });
+}
+
+const n = parseInt(new URLSearchParams(location.search).get("sesion"), 10);
+if (n >= 1 && n <= SESIONES.length) renderQuiz(n - 1); else renderHome();
+</script>
+</body>
+</html>
